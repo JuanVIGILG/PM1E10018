@@ -57,6 +57,14 @@ public class ActivityListView extends AppCompatActivity {
         ArrayAdapter adp = new ArrayAdapter(this, android.R.layout.simple_list_item_1, ArregloUsuarios);
         listausuarios.setAdapter(adp);
 
+        listausuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l){
+
+                obtenerobjeto(i);
+            }
+        });
+
         buscar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -75,14 +83,16 @@ public class ActivityListView extends AppCompatActivity {
         });
 
 
-        listausuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*listausuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 String informacion = "Nombre: " + lista.get(position).getNombre();
                 global = informacion;
                 Toast.makeText(getApplicationContext(), informacion, Toast.LENGTH_SHORT).show();
             }
-        });
+        });*/
+
+
 
         btnllamar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -99,12 +109,12 @@ public class ActivityListView extends AppCompatActivity {
             }
         });
 
-        btnactualizar.setOnClickListener(new View.OnClickListener() {
+        /*btnactualizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Actualizar();
             }
-        });
+        });*/
 
         btneliminar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -112,6 +122,19 @@ public class ActivityListView extends AppCompatActivity {
                 Eliminar();
             }
         });
+    }
+
+    private void obtenerobjeto(int id) {
+        Contactos cont = lista.get(id);
+
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+
+        intent.putExtra("nombre",cont.getId());
+        intent.putExtra("telefono",cont.getTelefono());
+        intent.putExtra("nota",cont.getNota());
+
+        startActivity(intent);
+
     }
 
     private void ObtenerListaUsuarios() {
@@ -170,7 +193,7 @@ public class ActivityListView extends AppCompatActivity {
         ClearScreen();
     }
 
-    private void Actualizar() {
+    /*private void Actualizar() {
         SQLiteDatabase db = conexion.getWritableDatabase();
         String [] params = {id.getText().toString()};
 
@@ -184,7 +207,7 @@ public class ActivityListView extends AppCompatActivity {
         Toast.makeText(getApplicationContext(), "Dato Actualizado", Toast.LENGTH_LONG).show();
         ClearScreen();
 
-    }
+    }*/
 
     private void ClearScreen() {
         nombre.setText("");
