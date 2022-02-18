@@ -1,6 +1,6 @@
 package com.example.pm1e10018.tablas;
 
-public class Usuarios {
+public class Contactos {
 
     private Integer id;
     private String pais;
@@ -8,9 +8,9 @@ public class Usuarios {
     private Integer telefono;
     private  String nota;
 
-    public Usuarios(){}
+    public Contactos(){}
 
-    public Usuarios(Integer id, String pais, String nombre, Integer telefono, String nota) {
+    public Contactos(Integer id, String pais, String nombre, Integer telefono, String nota) {
         this.id = id;
         this.pais = pais;
         this.nombre = nombre;

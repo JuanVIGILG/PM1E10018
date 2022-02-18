@@ -3,7 +3,6 @@ package com.example.pm1e10018;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.appcompat.app.AlertDialog;
-import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
 import android.content.DialogInterface;
@@ -22,7 +21,7 @@ import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.pm1e10018.tablas.Usuarios;
+import com.example.pm1e10018.tablas.Contactos;
 import com.example.pm1e10018.transacciones.Transacciones;
 
 import java.util.ArrayList;
@@ -31,7 +30,7 @@ public class ActivityListView extends AppCompatActivity {
 
     SQLiteConexion conexion;
     ListView listausuarios;
-    ArrayList<Usuarios> lista;
+    ArrayList<Contactos> lista;
     ArrayList<String> ArregloUsuarios;
     EditText id,nombre, telefono,nota, buscar;
     Spinner pais;
@@ -117,15 +116,15 @@ public class ActivityListView extends AppCompatActivity {
 
     private void ObtenerListaUsuarios() {
         SQLiteDatabase db = conexion.getWritableDatabase();
-        Usuarios listUsuarios = null;
-        lista = new ArrayList<Usuarios>();
+        Contactos listContactos = null;
+        lista = new ArrayList<Contactos>();
         Cursor cursor = db.rawQuery("SELECT * FROM " + Transacciones.tablausuarios, null);
         while (cursor.moveToNext()){
-            listUsuarios = new Usuarios();
-            listUsuarios.setNombre(cursor.getString(2));
-            listUsuarios.setTelefono(cursor.getInt(3));
+            listContactos = new Contactos();
+            listContactos.setNombre(cursor.getString(2));
+            listContactos.setTelefono(cursor.getInt(3));
 
-            lista.add(listUsuarios);
+            lista.add(listContactos);
         }
         cursor.close();
         fillList();
