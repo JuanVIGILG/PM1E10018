@@ -10,6 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PM1E10018">
         <activity
+            android:name=".ActivityLLamada"
+            android:exported="false" />
+        <activity
+            android:name=".AdaptadorSpinner"
+            android:exported="false" />
+        <activity
+            android:name=".ActivityListView"
+            android:exported="false" />
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
