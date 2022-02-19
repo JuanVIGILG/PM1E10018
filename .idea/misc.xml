@@ -3,12 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/Users/Usuario/AndroidStudioProjects/PM1E10018/app/src/main/res/layout/activity_editar.xml" value="0.25" />
-        <entry key="..\:/Users/Usuario/AndroidStudioProjects/PM1E10018/app/src/main/res/layout/activity_list_view.xml" value="0.22" />
-        <entry key="..\:/Users/Usuario/AndroidStudioProjects/PM1E10018/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/Users/petit/Desktop/Universidad/I PERIODO 2022/PROGRAMACION MOVIL I/I PARCIAL/Examen/PM1E10018/app/src/main/res/drawable/bg_key.xml" value="0.1" />
+        <entry key="..\:/Users/petit/Desktop/Universidad/I PERIODO 2022/PROGRAMACION MOVIL I/I PARCIAL/Examen/PM1E10018/app/src/main/res/layout/activity_actualizar.xml" value="0.264" />
         <entry key="..\:/Users/petit/Desktop/Universidad/I PERIODO 2022/PROGRAMACION MOVIL I/I PARCIAL/Examen/PM1E10018/app/src/main/res/layout/activity_list_view.xml" value="0.264" />
         <entry key="..\:/Users/petit/Desktop/Universidad/I PERIODO 2022/PROGRAMACION MOVIL I/I PARCIAL/Examen/PM1E10018/app/src/main/res/layout/activity_llamada.xml" value="0.15217391304347827" />
-        <entry key="..\:/Users/petit/Desktop/Universidad/I PERIODO 2022/PROGRAMACION MOVIL I/I PARCIAL/Examen/PM1E10018/app/src/main/res/layout/activity_main.xml" value="0.22826086956521738" />
+        <entry key="..\:/Users/petit/Desktop/Universidad/I PERIODO 2022/PROGRAMACION MOVIL I/I PARCIAL/Examen/PM1E10018/app/src/main/res/layout/activity_main.xml" value="0.13846153846153847" />
         <entry key="..\:/Users/petit/Desktop/Universidad/I PERIODO 2022/PROGRAMACION MOVIL I/I PARCIAL/Examen/PM1E10018/app/src/main/res/layout/item_spinner.xml" value="0.11458333333333333" />
       </map>
     </option>

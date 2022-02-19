@@ -10,6 +10,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.PM1E10018">
         <activity
+            android:name=".ActivityActualizar"
+            android:exported="true" />
+
+        <activity
             android:name=".ActivityLLamada"
             android:exported="false" />
         <activity
@@ -27,6 +31,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
     </application>
 
 </manifest>

@@ -33,7 +33,7 @@ public class MainActivity extends AppCompatActivity {
         adapter = new AdaptadorSpinner(this, arraycontenido);
         spinner.setAdapter(adapter);
 
-        Button btnsalvar = (Button)findViewById(R.id.btnsalvar);
+        Button btnsalvar = (Button)findViewById(R.id.btnEditar);
         Button btncontactos = (Button)findViewById(R.id.btncontactos);
         pais = (Spinner)findViewById(R.id.sppaices);
         nombre = (EditText)findViewById(R.id.txtnombre);

@@ -33,8 +33,14 @@ public class ActivityListView extends AppCompatActivity {
     ArrayList<Contactos> lista;
     ArrayList<String> ArregloUsuarios;
     EditText id,nombre, telefono,nota, buscar;
+    public String ID,Pais,Nombre,Nota;
+    public int Telefono;
     Spinner pais;
     public String global = " ";
+    public Boolean SelectedRow = false;
+    private Boolean isFirstTime = true;
+    Button btnactualizar;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,7 +49,7 @@ public class ActivityListView extends AppCompatActivity {
 
         Button btnatras = (Button)findViewById(R.id.btnatras);
         Button btneliminar = (Button)findViewById(R.id.btneliminar);
-        Button btnactualizar = (Button)findViewById(R.id.btnactualizar);
+        btnactualizar = (Button)findViewById(R.id.btnactualizar);
         Button btnllamar = (Button)findViewById(R.id.btnllamar);
 
         conexion = new SQLiteConexion(this, Transacciones.NameDataBase, null, 1);
@@ -57,13 +63,13 @@ public class ActivityListView extends AppCompatActivity {
         ArrayAdapter adp = new ArrayAdapter(this, android.R.layout.simple_list_item_1, ArregloUsuarios);
         listausuarios.setAdapter(adp);
 
-        listausuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*listausuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l){
 
                 obtenerobjeto(i);
             }
-        });
+        });*/
 
         buscar.addTextChangedListener(new TextWatcher() {
             @Override
@@ -82,18 +88,6 @@ public class ActivityListView extends AppCompatActivity {
             }
         });
 
-
-        /*listausuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String informacion = "Nombre: " + lista.get(position).getNombre();
-                global = informacion;
-                Toast.makeText(getApplicationContext(), informacion, Toast.LENGTH_SHORT).show();
-            }
-        });*/
-
-
-
         btnllamar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,12 +103,53 @@ public class ActivityListView extends AppCompatActivity {
             }
         });
 
-        /*btnactualizar.setOnClickListener(new View.OnClickListener() {
+        listausuarios.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+
+        listausuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                view.setSelected(true);
+
+                if (isFirstTime){
+                    isFirstTime = true;
+                }
+                if (SelectedRow == true){
+                    ID = lista.get(position).getId().toString();
+                    Nombre = lista.get(position).getNombre();
+                    Telefono = lista.get(position).getTelefono();
+                    Nota = lista.get(position).getNota();
+
+
+                }
+
+            }
+        });
+
+        btnactualizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Actualizar();
+                view.setSelected(true);
+
+                if (isFirstTime){
+                    isFirstTime = true;
+                }
+                if (SelectedRow==true) {
+                    Intent intent = new Intent(getApplicationContext(), ActivityActualizar.class);
+                    intent.putExtra("id", ID);
+                    //intent.putExtra("pais", Pais);
+                    intent.putExtra("nombre", Nombre);
+                    intent.putExtra("telefono", Telefono);
+                    intent.putExtra("nota", Nota);
+                    startActivity(intent);
+                    // finish();
+                }
+                else {
+                    Toast.makeText(ActivityListView.this, "Seleccione un registro", Toast.LENGTH_SHORT).show();
+                }
             }
-        });*/
+        });
+
+
 
         btneliminar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -122,9 +157,11 @@ public class ActivityListView extends AppCompatActivity {
                 Eliminar();
             }
         });
+
+
     }
 
-    private void obtenerobjeto(int id) {
+    /*private void obtenerobjeto(int id) {
         Contactos cont = lista.get(id);
 
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
@@ -135,7 +172,7 @@ public class ActivityListView extends AppCompatActivity {
 
         startActivity(intent);
 
-    }
+    }*/
 
     private void ObtenerListaUsuarios() {
         SQLiteDatabase db = conexion.getWritableDatabase();
@@ -184,6 +221,8 @@ public class ActivityListView extends AppCompatActivity {
         dialog.show();
     }
 
+
+
     private void Eliminar() {
         SQLiteDatabase db = conexion.getWritableDatabase();
         String [] params = {id.getText().toString()};
@@ -193,21 +232,6 @@ public class ActivityListView extends AppCompatActivity {
         ClearScreen();
     }
 
-    /*private void Actualizar() {
-        SQLiteDatabase db = conexion.getWritableDatabase();
-        String [] params = {id.getText().toString()};
-
-        ContentValues valores = new ContentValues();
-        valores.put(Transacciones.pais, pais.getSelectedItem().toString());
-        valores.put(Transacciones.nombre, nombre.getText().toString());
-        valores.put(Transacciones.telefono, telefono.getText().toString());
-        valores.put(Transacciones.nota, nota.getText().toString());
-
-        db.update(Transacciones.tablausuarios, valores, Transacciones.id + "=?", params);
-        Toast.makeText(getApplicationContext(), "Dato Actualizado", Toast.LENGTH_LONG).show();
-        ClearScreen();
-
-    }*/
 
     private void ClearScreen() {
         nombre.setText("");
