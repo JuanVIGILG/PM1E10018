@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pm1e10018.transacciones.Transacciones;
@@ -31,8 +32,10 @@ public class ActivityActualizar extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_actualizar);
 
-        Intent i = getIntent();
-        id  = getIntent().getExtras().getString("id");
+        recibirDatos();
+
+        /*Intent i = getIntent();
+        //id  = getIntent().getExtras().getString("id");
         Pais  = getIntent().getExtras().getString("pais");
         nombre  = getIntent().getExtras().getString("nombre");
         telefono  = getIntent().getExtras().getInt("telefono");
@@ -47,7 +50,7 @@ public class ActivityActualizar extends AppCompatActivity {
 
         nom.setText(nombre);
         tel.setText(telefono);
-        note.setText(nota);
+        note.setText(nota);*/
 
 
         //ObjImagen = (ImageView) findViewById(R.id.fotografia);
@@ -61,15 +64,38 @@ public class ActivityActualizar extends AppCompatActivity {
             }
         });*/
 
-        btnEditar.setOnClickListener(new View.OnClickListener() {
+       /* btnEditar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 validar();
                 Actualizar();
 
             }
-        });
+        });*/
 
+    }
+
+    public void recibirDatos(){
+        Bundle extras = getIntent().getExtras();
+        /*String d1 = extras.getString("Dato1");
+        String d2 = extras.getString("Dato2");
+        int d3 = extras.getInt("Dato3");
+        String d4 = extras.getString("Dato4");*/
+
+        //Pais  = extras.getString("pais");
+        nombre  = extras.getString("nombre");
+        telefono  = extras.getInt("telefono");
+        nota = extras.getString("nota");
+
+        //Dato1 = (TextView) findViewById(R.id.Dato1);
+        nom = (EditText) findViewById(R.id.txtnombre);
+        tel = (EditText) findViewById(R.id.txttelefono);
+        note = (EditText) findViewById(R.id.txtnota);
+
+       // Dato1.setText(d1);
+        nom.setText(nombre);
+        tel.setText(""+telefono);
+        note.setText(nota);
     }
 
     private void Actualizar() {

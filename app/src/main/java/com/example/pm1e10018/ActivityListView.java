@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.pm1e10018.tablas.Contactos;
@@ -33,13 +34,13 @@ public class ActivityListView extends AppCompatActivity {
     ArrayList<Contactos> lista;
     ArrayList<String> ArregloUsuarios;
     EditText id,nombre, telefono,nota, buscar;
-    public String ID,Pais,Nombre,Nota;
-    public int Telefono;
+    public String Pais,Nombre,Nota;
+    public int ID,Telefono;
     Spinner pais;
     public String global = " ";
     public Boolean SelectedRow = false;
     private Boolean isFirstTime = true;
-    Button btnactualizar;
+    Button btnactualizar, btncompartir;
 
 
     @Override
@@ -51,6 +52,7 @@ public class ActivityListView extends AppCompatActivity {
         Button btneliminar = (Button)findViewById(R.id.btneliminar);
         btnactualizar = (Button)findViewById(R.id.btnactualizar);
         Button btnllamar = (Button)findViewById(R.id.btnllamar);
+        btncompartir = (Button) findViewById(R.id.btncompartir);
 
         conexion = new SQLiteConexion(this, Transacciones.NameDataBase, null, 1);
         listausuarios = (ListView)findViewById(R.id.listausuarios);
@@ -108,29 +110,83 @@ public class ActivityListView extends AppCompatActivity {
         listausuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                view.setSelected(true);
+
+                //ID = lista.get(position).getId();
+                Nombre = lista.get(position).getNombre();
+                Telefono = lista.get(position).getTelefono();
+                Nota = lista.get(position).getNota();
+
+                //System.out.println("Choosen Country = : " + ID);
+                System.out.println("Choosen Country = : " + Nombre);
+                System.out.println("Choosen Country = : " + Telefono);
+                System.out.println("Choosen Country = : " + Nota);
+                /*view.setSelected(true);
 
                 if (isFirstTime){
                     isFirstTime = true;
                 }
                 if (SelectedRow == true){
-                    ID = lista.get(position).getId().toString();
+                    ID = lista.get(position).toString();
                     Nombre = lista.get(position).getNombre();
                     Telefono = lista.get(position).getTelefono();
                     Nota = lista.get(position).getNota();
 
+                    System.out.println("Choosen Country = : " + ID);
+                    System.out.println("Choosen Country = : " + Nombre);
+                    System.out.println("Choosen Country = : " + Telefono);
+                    System.out.println("Choosen Country = : " + Nota);
 
-                }
+                }*/
 
+            }
+        });
+
+
+
+        /*listausuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                System.out.println("Choosen Country = : " + ArregloUsuarios);
+            }});*/
+
+        btncompartir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Compartir();
             }
         });
 
         btnactualizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                view.setSelected(true);
 
-                if (isFirstTime){
+                if(Nombre.isEmpty()){
+                    Toast.makeText(ActivityListView.this, "Seleccione un registro", Toast.LENGTH_SHORT).show();
+                }else {
+                    Intent intent = new Intent(getApplicationContext(), ActivityActualizar.class);
+                    intent.putExtra("nombre", Nombre);
+                    intent.putExtra("telefono", Telefono);
+                    intent.putExtra("nota", Nota);
+                    //intent.putExtra("Dato4",correo);
+                    startActivity(intent);
+
+                    System.out.println("Choosen Country = : " + Nombre);
+                }
+
+                /*if(Nombre.isEmpty()){
+                    Toast.makeText(ActivityListView.this, "Seleccione un registro", Toast.LENGTH_SHORT).show();
+                }else{
+
+                    Intent intent = new Intent(getApplicationContext(), ActivityActualizar.class);
+                    //intent.putExtra("id", ID);
+                    //intent.putExtra("pais", Pais);
+                    intent.putExtra("nombre", Nombre);
+                    intent.putExtra("telefono", Telefono);
+                    intent.putExtra("nota", Nota);
+                    startActivity(intent);
+                }*/
+                //view.setSelected(true);
+
+                /*if (isFirstTime){
                     isFirstTime = true;
                 }
                 if (SelectedRow==true) {
@@ -145,7 +201,7 @@ public class ActivityListView extends AppCompatActivity {
                 }
                 else {
                     Toast.makeText(ActivityListView.this, "Seleccione un registro", Toast.LENGTH_SHORT).show();
-                }
+                }*/
             }
         });
 
@@ -159,6 +215,14 @@ public class ActivityListView extends AppCompatActivity {
         });
 
 
+    }
+
+    public void Compartir(){
+        Intent intent = new Intent (Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(Intent.EXTRA_TEXT,Nombre+" "+Telefono);
+        Intent eleccion = Intent.createChooser(intent,"Compartir usando");
+        startActivity(eleccion);
     }
 
     /*private void obtenerobjeto(int id) {
@@ -181,9 +245,10 @@ public class ActivityListView extends AppCompatActivity {
         Cursor cursor = db.rawQuery("SELECT * FROM " + Transacciones.tablausuarios, null);
         while (cursor.moveToNext()){
             listContactos = new Contactos();
+            //listContactos.setId(cursor.getInt(1));
             listContactos.setNombre(cursor.getString(2));
             listContactos.setTelefono(cursor.getInt(3));
-
+            listContactos.setNota(cursor.getString(4));
             lista.add(listContactos);
         }
         cursor.close();
