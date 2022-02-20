@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.example.pm1e10018.tablas.Contactos;
 import com.example.pm1e10018.transacciones.Transacciones;
 
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 
 public class ActivityListView extends AppCompatActivity {
@@ -42,9 +43,10 @@ public class ActivityListView extends AppCompatActivity {
     ListView listausuarios;
     ArrayList<Contactos> lista;
     ArrayList<String> ArregloUsuarios;
-    EditText id,nombre, telefono,nota, buscar;
+    EditText nombre, telefono,nota, buscar;
     public String Pais,Nombre,Nota;
     public int ID,Telefono;
+    public String id_contacto;
     Spinner pais;
     Button btnactualizar, btncompartir, btnatras, btneliminar,btnimagen;
 
@@ -105,10 +107,17 @@ public class ActivityListView extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                //ID = lista.get(position).getId();
+                ID = lista.get(position).getId();
                 Nombre = lista.get(position).getNombre();
                 Telefono = lista.get(position).getTelefono();
                 Nota = lista.get(position).getNota();
+
+
+
+                id_contacto = String.valueOf(ID);
+                System.out.println("ID"+ID);
+                System.out.println("Nombre"+Nombre);
+                System.out.println("Nota"+Nota);
             }
         });
 
@@ -150,6 +159,7 @@ public class ActivityListView extends AppCompatActivity {
                     Toast.makeText(ActivityListView.this, "Seleccione un registro", Toast.LENGTH_SHORT).show();
                 }else {
                     Intent intent = new Intent(getApplicationContext(), ActivityActualizar.class);
+                    intent.putExtra("id", ID);
                     intent.putExtra("nombre", Nombre);
                     intent.putExtra("telefono", Telefono);
                     intent.putExtra("nota", Nota);
@@ -164,10 +174,36 @@ public class ActivityListView extends AppCompatActivity {
         btneliminar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(Nombre == null && Telefono <=0 && Nota == null){
+
+
+                if (Nombre == null && Telefono <=0 && Nota == null) {
                     Toast.makeText(ActivityListView.this, "Seleccione un registro", Toast.LENGTH_SHORT).show();
-                }else {
-                    Eliminar();
+                }
+                else {
+                    android.app.AlertDialog.Builder builder= new android.app.AlertDialog.Builder(ActivityListView.this);
+                    builder.setMessage("Desea eliminar a "+ Nombre);
+                    builder.setTitle("Eliminar");
+
+                    builder.setPositiveButton("SÍ", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                            Eliminar();
+
+                            Intent intent = new Intent(ActivityListView.this, ActivityListView.class);
+                            startActivity(intent);
+                            finish();
+                        }
+                    });
+
+                    builder.setNegativeButton("NO", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                        }
+                    });
+
+                    android.app.AlertDialog dialog = builder.create();
+                    dialog.show();
                 }
             }
         });
@@ -241,59 +277,41 @@ public class ActivityListView extends AppCompatActivity {
         Cursor cursor = db.rawQuery("SELECT * FROM " + Transacciones.tablausuarios, null);
         while (cursor.moveToNext()){
             listContactos = new Contactos();
-            //listContactos.setId(cursor.getInt(1));
+            listContactos.setId(cursor.getInt(0));
+            listContactos.setPais(cursor.getString(1));
             listContactos.setNombre(cursor.getString(2));
             listContactos.setTelefono(cursor.getInt(3));
             listContactos.setNota(cursor.getString(4));
             lista.add(listContactos);
         }
+
+
         cursor.close();
         fillList();
     }
 
     // -- METODO PARA RELLENAR LA LISTA --
     private void fillList() {
+
         ArregloUsuarios = new ArrayList<String>();
         for (int i = 0; i<lista.size(); i++){
-            ArregloUsuarios.add(lista.get(i).getNombre() +" | "+
+            ArregloUsuarios.add(
+                    lista.get(i).getId() +" | "+
+                    lista.get(i).getNombre() +" | "+
                     lista.get(i).getTelefono());
         }
-    }
-
-    // *** PENDIENTE ***
-    // -- METODO PARA EL ALERT DIALOG --
-    @Override
-    public void onBackPressed() {
-        AlertDialog.Builder myBuild = new AlertDialog.Builder(this);
-        myBuild.setTitle("Accion");
-        myBuild.setMessage("Desea realizar la llamada?");
-        myBuild.setPositiveButton("Si", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                startActivity(intent);
-            }
-        });
-        myBuild.setNegativeButton("No", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                dialog.cancel();
-            }
-        });
-
-        AlertDialog dialog = myBuild.create();
-        dialog.show();
+        System.out.println("ID"+ID);
     }
 
     // *** P E N D I E N T E ***
     // -- METODO PARA ELIMINAR UN REGISTRO DE LA BASE DE DATOS --
     private void Eliminar() {
+        conexion = new SQLiteConexion(this, Transacciones.NameDataBase, null, 1);
         SQLiteDatabase db = conexion.getWritableDatabase();
-        String [] params = {id.getText().toString()};
-        String wherecond = Transacciones.id + "=?";
-        db.delete(Transacciones.tablausuarios, wherecond, params);
+        String [] params = {id_contacto};
+
+        db.delete(Transacciones.tablausuarios,Transacciones.id+"=?",params);
         Toast.makeText(getApplicationContext(), "Dato Eliminado", Toast.LENGTH_LONG).show();
-        ClearScreen();
     }
 
     // -- METODO PARA LIMPIAR PANTALLA --

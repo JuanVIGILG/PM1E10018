@@ -21,7 +21,8 @@ import com.example.pm1e10018.transacciones.Transacciones;
 
 public class ActivityActualizar extends AppCompatActivity {
 
-    String id, nombre, nota, Pais, pais;
+    String nombre, nota, Pais, pais;
+    int id;
     int telefono;
     EditText nom, tel, note;
     Spinner spinner;
@@ -83,19 +84,20 @@ public class ActivityActualizar extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
 
         //Pais  = extras.getString("pais");
+        id  = extras.getInt("id");
         nombre  = extras.getString("nombre");
         telefono  = extras.getInt("telefono");
         nota = extras.getString("nota");
 
-        //Dato1 = (TextView) findViewById(R.id.Dato1);
         nom = (EditText) findViewById(R.id.txtnombre);
         tel = (EditText) findViewById(R.id.txttelefono);
         note = (EditText) findViewById(R.id.txtnota);
 
-       // Dato1.setText(d1);
         nom.setText(nombre);
         tel.setText(""+telefono);
         note.setText(nota);
+
+
     }
 
     // ** P E N D I E N T E PAIS**
@@ -103,7 +105,7 @@ public class ActivityActualizar extends AppCompatActivity {
     private void Actualizar() {
         SQLiteConexion conexion = new SQLiteConexion(this, Transacciones.NameDataBase, null, 1);
         SQLiteDatabase db = conexion.getWritableDatabase();
-        String [] params = {id.toString()};
+        String [] params = {String.valueOf(id)};
 
         ContentValues valores =  new ContentValues();
         //valores.put(Transacciones.pais, pais.getSelectedItem().toString());
