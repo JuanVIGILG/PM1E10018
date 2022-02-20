@@ -47,7 +47,6 @@ public class ActivityListView extends AppCompatActivity {
     public String Pais,Nombre,Nota;
     public int ID,Telefono;
     public String id_contacto;
-    Spinner pais;
     Button btnactualizar, btncompartir, btnatras, btneliminar,btnimagen;
 
 
@@ -108,16 +107,13 @@ public class ActivityListView extends AppCompatActivity {
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
                 ID = lista.get(position).getId();
+                Pais = lista.get(position).getPais();
                 Nombre = lista.get(position).getNombre();
                 Telefono = lista.get(position).getTelefono();
                 Nota = lista.get(position).getNota();
 
-
-
                 id_contacto = String.valueOf(ID);
-                System.out.println("ID"+ID);
-                System.out.println("Nombre"+Nombre);
-                System.out.println("Nota"+Nota);
+
             }
         });
 
@@ -160,6 +156,7 @@ public class ActivityListView extends AppCompatActivity {
                 }else {
                     Intent intent = new Intent(getApplicationContext(), ActivityActualizar.class);
                     intent.putExtra("id", ID);
+                    intent.putExtra("pais", Pais);
                     intent.putExtra("nombre", Nombre);
                     intent.putExtra("telefono", Telefono);
                     intent.putExtra("nota", Nota);
@@ -169,7 +166,6 @@ public class ActivityListView extends AppCompatActivity {
             }
         });
 
-        // *** P E N D I E N T E ***
         // -- BOTÓN ELIMINAR PARA BORRAR UN REGISTRO SELECCIONADO --
         btneliminar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -268,7 +264,6 @@ public class ActivityListView extends AppCompatActivity {
         startActivity(eleccion);
     }
 
-    // *** P E N D I E N T E ID ***
     // -- METODO PARA OBTENER LOS REGISTROS DE LA TABLA EN LA BASE DE DATOS --
     private void ObtenerListaUsuarios() {
         SQLiteDatabase db = conexion.getWritableDatabase();
@@ -296,14 +291,14 @@ public class ActivityListView extends AppCompatActivity {
         ArregloUsuarios = new ArrayList<String>();
         for (int i = 0; i<lista.size(); i++){
             ArregloUsuarios.add(
-                    lista.get(i).getId() +" | "+
-                    lista.get(i).getNombre() +" | "+
-                    lista.get(i).getTelefono());
+                            lista.get(i).getId() +" | "+
+                            lista.get(i).getPais() +" | "+
+                            lista.get(i).getNombre() +" | "+
+                            lista.get(i).getTelefono());
         }
         System.out.println("ID"+ID);
     }
 
-    // *** P E N D I E N T E ***
     // -- METODO PARA ELIMINAR UN REGISTRO DE LA BASE DE DATOS --
     private void Eliminar() {
         conexion = new SQLiteConexion(this, Transacciones.NameDataBase, null, 1);

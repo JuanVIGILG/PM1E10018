@@ -1,14 +1,20 @@
 package com.example.pm1e10018;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,64 +27,80 @@ import com.example.pm1e10018.transacciones.Transacciones;
 
 public class ActivityActualizar extends AppCompatActivity {
 
-    String nombre, nota, Pais, pais;
+    String nombre, nota,ID;
     int id;
     int telefono;
     EditText nom, tel, note;
-    Spinner spinner;
-    Button btnEditar;
+
+    Button btnEditar,btnTomarFoto, btnSubirFoto, btnatras;
+    ImageView foto;
+    SQLiteConexion conexion;
+
+    private Spinner spinner;
+    private String[] arraycontenido;
+    private AdaptadorSpinner adapter;
+
+    static final int PETICION_ACCESO_CAM = 102;
+    static final int TAKE_PIC_REQUEST = 103;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_actualizar);
 
+        spinner = findViewById(R.id.sppaices);
+        arraycontenido = new String[]{"Honduras(504)", "Costa Rica(506)", "Guatemala(502)", "El Salvador(503)"};
+        adapter = new AdaptadorSpinner(this, arraycontenido);
+        spinner.setAdapter(adapter);
+
+        nom = (EditText) findViewById(R.id.txtnombre);
+        tel = (EditText) findViewById(R.id.txttelefono);
+        note = (EditText) findViewById(R.id.txtnota);
+        btnEditar = (Button) findViewById(R.id.btnEditar);
+        btnatras = (Button) findViewById(R.id.btnatras);
+        btnTomarFoto = (Button) findViewById(R.id.btnTomarFoto);
+        btnSubirFoto = (Button) findViewById(R.id.btnSubirFoto);
+        foto = (ImageView) findViewById(R.id.foto);
+
         recibirDatos();
 
-        /*Intent i = getIntent();
-        //id  = getIntent().getExtras().getString("id");
-        Pais  = getIntent().getExtras().getString("pais");
-        nombre  = getIntent().getExtras().getString("nombre");
-        telefono  = getIntent().getExtras().getInt("telefono");
-        nota = getIntent().getExtras().getString("nota");
-
-        spinner = (Spinner) findViewById(R.id.sppaices);
-        nom = (EditText)findViewById(R.id.txtnombre);
-        tel = (EditText)findViewById(R.id.txttelefono);
-        note = (EditText)findViewById(R.id.txtnota);
-        btnEditar = (Button) findViewById(R.id.btnEditar);
-
-
-        nom.setText(nombre);
-        tel.setText(telefono);
-        note.setText(nota);*/
-
-
-        //ObjImagen = (ImageView) findViewById(R.id.fotografia);
-        //btnfoto = (Button) findViewById(R.id.btnfoto);
-
-        /*btnfoto.setOnClickListener(new View.OnClickListener() {
+        // -- BOTON PARA REGRESAR AL ActivityList --
+        btnatras.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
-                abrirCamara();
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), ActivityListView.class);
+                startActivity(intent);
             }
-        });*/
+        });
 
-       /* btnEditar.setOnClickListener(new View.OnClickListener() {
+        // -- BOTON PARA TOMAR LA FOTOGRAFIA --
+        btnTomarFoto.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
-                validar();
+            public void onClick(View view) {
+                permisosCamara();
+            }
+        });
+
+        // -- BOTON PARA CARGAR LA IMAGEN DE LA GALERIA --
+        btnSubirFoto.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                cargarImagen();
+            }
+        });
+
+        // -- BOTON PARA ACTUALIZAR EL CONTACTO EN LA BD --
+        btnEditar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
                 Actualizar();
-
             }
-        });*/
+        });
 
     }
 
     // ----- INICIO DE METODOS -----
 
-    // ** P E N D I E N T E PAIS **
     // -- METODO PARA RECIBIR LOS DATOS DEL ActivityListView
     public void recibirDatos(){
         Bundle extras = getIntent().getExtras();
@@ -89,10 +111,7 @@ public class ActivityActualizar extends AppCompatActivity {
         telefono  = extras.getInt("telefono");
         nota = extras.getString("nota");
 
-        nom = (EditText) findViewById(R.id.txtnombre);
-        tel = (EditText) findViewById(R.id.txttelefono);
-        note = (EditText) findViewById(R.id.txtnota);
-
+        ID = String.valueOf(id);
         nom.setText(nombre);
         tel.setText(""+telefono);
         note.setText(nota);
@@ -100,25 +119,22 @@ public class ActivityActualizar extends AppCompatActivity {
 
     }
 
-    // ** P E N D I E N T E PAIS**
     // -- METODO PARA ACTUALIZAR EL CONTACTO EN LA BASE DE DATOS
     private void Actualizar() {
-        SQLiteConexion conexion = new SQLiteConexion(this, Transacciones.NameDataBase, null, 1);
+        conexion = new SQLiteConexion(this, Transacciones.NameDataBase, null, 1);
         SQLiteDatabase db = conexion.getWritableDatabase();
-        String [] params = {String.valueOf(id)};
+        String [] params = {ID};
 
-        ContentValues valores =  new ContentValues();
-        //valores.put(Transacciones.pais, pais.getSelectedItem().toString());
+        ContentValues valores = new ContentValues();
+        valores.put(Transacciones.pais, spinner.getSelectedItem().toString());
         valores.put(Transacciones.nombre, nom.getText().toString());
         valores.put(Transacciones.telefono, tel.getText().toString());
         valores.put(Transacciones.nota, note.getText().toString());
 
-        if (validar() == true){
+        if (validar() == true) {
             db.update(Transacciones.tablausuarios, valores, Transacciones.id + "=?", params);
-            Toast.makeText(getApplicationContext(), "Dato Actualizado", Toast.LENGTH_LONG).show();
-            db.close();
+            Toast.makeText(getApplicationContext(), "Dato Actualizado" + ID, Toast.LENGTH_LONG).show();
         }
-
     }
 
     // -- METODO PARA VALIDAR CAMPOS VACIOS Y MOSTRAR ALERTAS --
@@ -145,5 +161,63 @@ public class ActivityActualizar extends AppCompatActivity {
         return retorno;
     }
 
+    // -- METODO PARA DAR PERMISOS PARA USAR LA CAMARA --
+    private void permisosCamara(){
+        if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.CAMERA) !=
+                PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.CAMERA},PETICION_ACCESO_CAM);
+        }else{
+            tomarFoto();
+            //dispatchTakePictureIntent();
+        }
+    }
+
+    // -- METODO PARA LA RESPUESTA AL PERMISO A LA CAMARA
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PETICION_ACCESO_CAM){
+
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                tomarFoto();
+            }
+        }else{
+            Toast.makeText(getApplicationContext(),"Necesita permiso de acceso a la camara",Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // -- METODO PARA IR A CAPTURAR LA FOTOGRAFIA --
+    private void tomarFoto(){
+        Intent takepic = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        if (takepic.resolveActivity(getPackageManager()) != null){
+            startActivityForResult(takepic,TAKE_PIC_REQUEST);
+        }
+    }
+
+    // -- METODO PARA CARGAR LA IMAGEN DE LA GALERIA DEL SISTEMA --
+    private void cargarImagen(){
+        Intent intent = new Intent(Intent.ACTION_PICK,MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        intent.setType("image/");
+        startActivityForResult(intent.createChooser(intent, "Seleccione la Aplicación"),10);
+    }
+
+    // -- METODO PARA OBTENER LA FOTOGRAFIA Y MOSTRARLA EN LA APP --
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        if ( resultCode == RESULT_OK) {
+            Uri path=data.getData();
+            foto.setImageURI(path);
+
+            if (requestCode == TAKE_PIC_REQUEST) {
+                Bundle extras = data.getExtras();
+                Bitmap img = (Bitmap) extras.get("data");
+                foto.setImageBitmap(img);
+            }
+        }
+    }
 
 }

@@ -48,7 +48,6 @@ public class MainActivity extends AppCompatActivity {
 
     static final int PETICION_ACCESO_CAM = 100;
     static final int TAKE_PIC_REQUEST = 101;
-    static final int SELECT_FILE = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         nota = (EditText)findViewById(R.id.txtnota);
         imagen = (ImageView) findViewById(R.id.imagen);
 
-        // -- BOTON PARA AGRESAR CONTACTO --
+        // -- BOTON PARA AGREGAR CONTACTO --
         btnsalvar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
