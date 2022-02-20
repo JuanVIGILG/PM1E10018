@@ -75,12 +75,12 @@ public class ActivityActualizar extends AppCompatActivity {
 
     }
 
+    // ----- INICIO DE METODOS -----
+
+    // ** P E N D I E N T E PAIS **
+    // -- METODO PARA RECIBIR LOS DATOS DEL ActivityListView
     public void recibirDatos(){
         Bundle extras = getIntent().getExtras();
-        /*String d1 = extras.getString("Dato1");
-        String d2 = extras.getString("Dato2");
-        int d3 = extras.getInt("Dato3");
-        String d4 = extras.getString("Dato4");*/
 
         //Pais  = extras.getString("pais");
         nombre  = extras.getString("nombre");
@@ -98,6 +98,8 @@ public class ActivityActualizar extends AppCompatActivity {
         note.setText(nota);
     }
 
+    // ** P E N D I E N T E PAIS**
+    // -- METODO PARA ACTUALIZAR EL CONTACTO EN LA BASE DE DATOS
     private void Actualizar() {
         SQLiteConexion conexion = new SQLiteConexion(this, Transacciones.NameDataBase, null, 1);
         SQLiteDatabase db = conexion.getWritableDatabase();
@@ -117,6 +119,7 @@ public class ActivityActualizar extends AppCompatActivity {
 
     }
 
+    // -- METODO PARA VALIDAR CAMPOS VACIOS Y MOSTRAR ALERTAS --
     public boolean validar(){
         boolean retorno= true;
 

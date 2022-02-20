@@ -20,7 +20,8 @@
             android:layout_margin="20dp"
             android:layout_marginStart="20dp"
             android:lineSpacingExtra="14sp"
-            android:text="Atras ..." />
+            android:text="Atras"
+            android:backgroundTint="#ACB1AC"/>
 
         <EditText
             android:id="@+id/txtbusqueda"
@@ -68,27 +69,29 @@
         android:orientation="horizontal">
 
         <Button
-            android:id="@+id/btnllamar"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_marginStart="40dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:lineSpacingExtra="14sp"
-            android:text="Llamar Contacto"
-            android:textSize="10sp" />
-
-        <Button
             android:id="@+id/btncompartir"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:backgroundTint="#4CAF50"
+            android:lineSpacingExtra="14sp"
+            android:text="Compartir Contacto"
+            android:textSize="10sp" />
+
+        <Button
+            android:id="@+id/btnllamar"
+            android:layout_width="147dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:backgroundTint="#4CAF50"
             android:layout_marginStart="40dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             android:lineSpacingExtra="14sp"
-            android:text="Compartir Contacto"
+            android:text="Ver Imagen"
             android:textSize="10sp" />
 
     </LinearLayout>
@@ -104,9 +107,10 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="40dp"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
+            android:backgroundTint="#2196F3"
             android:lineSpacingExtra="14sp"
             android:text="Eliminar Contacto"
             android:textSize="10sp" />
@@ -116,12 +120,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_marginStart="40dp"
+            android:backgroundTint="#2196F3"
+            android:layout_marginStart="30dp"
             android:layout_marginTop="20dp"
-            android:layout_toRightOf="@+id/btneliminar"
+            android:layout_marginBottom="20dp"
             android:lineSpacingExtra="14sp"
             android:text="Actualizar Contacto"
             android:textSize="10sp" />
+
 
     </LinearLayout>
 

@@ -1,17 +1,25 @@
 package com.example.pm1e10018;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
+import android.Manifest;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.GestureDetector;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -29,6 +37,7 @@ import java.util.ArrayList;
 
 public class ActivityListView extends AppCompatActivity {
 
+    private static final int REQUEST_CALL = 1;
     SQLiteConexion conexion;
     ListView listausuarios;
     ArrayList<Contactos> lista;
@@ -37,10 +46,7 @@ public class ActivityListView extends AppCompatActivity {
     public String Pais,Nombre,Nota;
     public int ID,Telefono;
     Spinner pais;
-    public String global = " ";
-    public Boolean SelectedRow = false;
-    private Boolean isFirstTime = true;
-    Button btnactualizar, btncompartir;
+    Button btnactualizar, btncompartir, btnatras, btneliminar,btnimagen;
 
 
     @Override
@@ -48,31 +54,23 @@ public class ActivityListView extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_view);
 
-        Button btnatras = (Button)findViewById(R.id.btnatras);
-        Button btneliminar = (Button)findViewById(R.id.btneliminar);
+        btnatras = (Button)findViewById(R.id.btnatras);
+        btneliminar = (Button)findViewById(R.id.btneliminar);
         btnactualizar = (Button)findViewById(R.id.btnactualizar);
-        Button btnllamar = (Button)findViewById(R.id.btnllamar);
         btncompartir = (Button) findViewById(R.id.btncompartir);
-
-        conexion = new SQLiteConexion(this, Transacciones.NameDataBase, null, 1);
         listausuarios = (ListView)findViewById(R.id.listausuarios);
+        buscar = (EditText)findViewById(R.id.txtbusqueda);
+
+        // -- CONEXION A LA BASE DE DATOS
+        conexion = new SQLiteConexion(this, Transacciones.NameDataBase, null, 1);
 
         ObtenerListaUsuarios();
 
-        buscar = (EditText)findViewById(R.id.txtbusqueda);
-        listausuarios = (ListView)findViewById(R.id.listausuarios);
-
+        // -- ADAPTA LA MATRIZ DE OBJETOS COMO FUENTE DE DATOS --
         ArrayAdapter adp = new ArrayAdapter(this, android.R.layout.simple_list_item_1, ArregloUsuarios);
         listausuarios.setAdapter(adp);
 
-        /*listausuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l){
-
-                obtenerobjeto(i);
-            }
-        });*/
-
+        // --- BARRA DEL BUSCADOR ---
         buscar.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -90,13 +88,7 @@ public class ActivityListView extends AppCompatActivity {
             }
         });
 
-        btnllamar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onBackPressed();
-            }
-        });
-
+        // -- BOTÓN ATRÁS PARA REGRESAR AL MENÚ PRINCIPAL --
         btnatras.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -105,8 +97,10 @@ public class ActivityListView extends AppCompatActivity {
             }
         });
 
+        // -- EFECTO DE SELECCIÓN --
         listausuarios.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
 
+        // -- OBTENER ITEM SELECCIONADO --
         listausuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -115,51 +109,44 @@ public class ActivityListView extends AppCompatActivity {
                 Nombre = lista.get(position).getNombre();
                 Telefono = lista.get(position).getTelefono();
                 Nota = lista.get(position).getNota();
-
-                //System.out.println("Choosen Country = : " + ID);
-                System.out.println("Choosen Country = : " + Nombre);
-                System.out.println("Choosen Country = : " + Telefono);
-                System.out.println("Choosen Country = : " + Nota);
-                /*view.setSelected(true);
-
-                if (isFirstTime){
-                    isFirstTime = true;
-                }
-                if (SelectedRow == true){
-                    ID = lista.get(position).toString();
-                    Nombre = lista.get(position).getNombre();
-                    Telefono = lista.get(position).getTelefono();
-                    Nota = lista.get(position).getNota();
-
-                    System.out.println("Choosen Country = : " + ID);
-                    System.out.println("Choosen Country = : " + Nombre);
-                    System.out.println("Choosen Country = : " + Telefono);
-                    System.out.println("Choosen Country = : " + Nota);
-
-                }*/
-
             }
         });
 
+        // -- EVENTO DOBLE CLIC EN LA LISTA PARA ABRIR ALERT DIALOG
+        listausuarios.setOnTouchListener(new View.OnTouchListener() {
+            GestureDetector gestureDetector = new GestureDetector(getApplicationContext(), new GestureDetector.SimpleOnGestureListener(){
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    AlertDialog();
+                    //Toast.makeText(getApplicationContext(),"Doble clic", Toast.LENGTH_SHORT).show();
+                    return super.onDoubleTap(e);
+                }
+            });
+            @Override
+            public boolean onTouch(View view, MotionEvent motionEvent) {
+                gestureDetector.onTouchEvent(motionEvent);
+                return false;
+            }
+        });
 
-
-        /*listausuarios.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                System.out.println("Choosen Country = : " + ArregloUsuarios);
-            }});*/
-
+        // -- BOTÓN PARA COMPARTIR LOS DATOS CON OTRA APLICACIÓN DEL SISTEMA --
         btncompartir.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Compartir();
+                if(Nombre == null && Telefono <=0 && Nota == null){
+                    Toast.makeText(ActivityListView.this, "Seleccione un registro", Toast.LENGTH_SHORT).show();
+                }else {
+                    Compartir();
+                }
             }
         });
 
+        // -- BOTÓN ACTUALIZAR PARA ENVIAR LOS DATOS SELECCIONADOS AL ActivityActualizar --
         btnactualizar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                if(Nombre.isEmpty()){
+                if(Nombre == null && Telefono <=0 && Nota == null){
                     Toast.makeText(ActivityListView.this, "Seleccione un registro", Toast.LENGTH_SHORT).show();
                 }else {
                     Intent intent = new Intent(getApplicationContext(), ActivityActualizar.class);
@@ -168,55 +155,75 @@ public class ActivityListView extends AppCompatActivity {
                     intent.putExtra("nota", Nota);
                     //intent.putExtra("Dato4",correo);
                     startActivity(intent);
-
-                    System.out.println("Choosen Country = : " + Nombre);
                 }
-
-                /*if(Nombre.isEmpty()){
-                    Toast.makeText(ActivityListView.this, "Seleccione un registro", Toast.LENGTH_SHORT).show();
-                }else{
-
-                    Intent intent = new Intent(getApplicationContext(), ActivityActualizar.class);
-                    //intent.putExtra("id", ID);
-                    //intent.putExtra("pais", Pais);
-                    intent.putExtra("nombre", Nombre);
-                    intent.putExtra("telefono", Telefono);
-                    intent.putExtra("nota", Nota);
-                    startActivity(intent);
-                }*/
-                //view.setSelected(true);
-
-                /*if (isFirstTime){
-                    isFirstTime = true;
-                }
-                if (SelectedRow==true) {
-                    Intent intent = new Intent(getApplicationContext(), ActivityActualizar.class);
-                    intent.putExtra("id", ID);
-                    //intent.putExtra("pais", Pais);
-                    intent.putExtra("nombre", Nombre);
-                    intent.putExtra("telefono", Telefono);
-                    intent.putExtra("nota", Nota);
-                    startActivity(intent);
-                    // finish();
-                }
-                else {
-                    Toast.makeText(ActivityListView.this, "Seleccione un registro", Toast.LENGTH_SHORT).show();
-                }*/
             }
         });
 
-
-
+        // *** P E N D I E N T E ***
+        // -- BOTÓN ELIMINAR PARA BORRAR UN REGISTRO SELECCIONADO --
         btneliminar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Eliminar();
+                if(Nombre == null && Telefono <=0 && Nota == null){
+                    Toast.makeText(ActivityListView.this, "Seleccione un registro", Toast.LENGTH_SHORT).show();
+                }else {
+                    Eliminar();
+                }
             }
         });
 
-
     }
 
+    // ----- INICIO DE METODOS -----
+
+    // -- METODO PARA REALIZAR UNA LLAMADA --
+    public void Llamar(){
+
+        if (ContextCompat.checkSelfPermission(ActivityListView.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(ActivityListView.this,new String[]{Manifest.permission.CALL_PHONE},REQUEST_CALL);
+        }else{
+            String dial = "tel:"+Telefono;
+            startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
+        }
+    }
+
+    // -- METODO PARA OBTENER PERMISO PARA REALIZAR LLAMADAS --
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQUEST_CALL){
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                Llamar();
+            }else{
+                Toast.makeText(this,"Permiso Denegado",Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    // -- METODO PARA ALERT DIALOG QUE PERMITA O NO REALIZAR LA LLAMADA --
+    public void AlertDialog() {
+        AlertDialog.Builder myBuild = new AlertDialog.Builder(this);
+        myBuild.setTitle("Accion");
+        myBuild.setMessage("Desea realizar la llamada?");
+        myBuild.setPositiveButton("Si", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                Llamar();
+            }
+        });
+        myBuild.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        AlertDialog dialog = myBuild.create();
+        dialog.show();
+    }
+
+    // -- METODO PARA COMPARTIR UN TEXTO A OTRA APLICACION DEL SISTEMA --
     public void Compartir(){
         Intent intent = new Intent (Intent.ACTION_SEND);
         intent.setType("text/plain");
@@ -225,19 +232,8 @@ public class ActivityListView extends AppCompatActivity {
         startActivity(eleccion);
     }
 
-    /*private void obtenerobjeto(int id) {
-        Contactos cont = lista.get(id);
-
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-
-        intent.putExtra("nombre",cont.getId());
-        intent.putExtra("telefono",cont.getTelefono());
-        intent.putExtra("nota",cont.getNota());
-
-        startActivity(intent);
-
-    }*/
-
+    // *** P E N D I E N T E ID ***
+    // -- METODO PARA OBTENER LOS REGISTROS DE LA TABLA EN LA BASE DE DATOS --
     private void ObtenerListaUsuarios() {
         SQLiteDatabase db = conexion.getWritableDatabase();
         Contactos listContactos = null;
@@ -255,6 +251,7 @@ public class ActivityListView extends AppCompatActivity {
         fillList();
     }
 
+    // -- METODO PARA RELLENAR LA LISTA --
     private void fillList() {
         ArregloUsuarios = new ArrayList<String>();
         for (int i = 0; i<lista.size(); i++){
@@ -263,6 +260,8 @@ public class ActivityListView extends AppCompatActivity {
         }
     }
 
+    // *** PENDIENTE ***
+    // -- METODO PARA EL ALERT DIALOG --
     @Override
     public void onBackPressed() {
         AlertDialog.Builder myBuild = new AlertDialog.Builder(this);
@@ -271,7 +270,7 @@ public class ActivityListView extends AppCompatActivity {
         myBuild.setPositiveButton("Si", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                Intent intent = new Intent(getApplicationContext(), ActivityLLamada.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 startActivity(intent);
             }
         });
@@ -286,8 +285,8 @@ public class ActivityListView extends AppCompatActivity {
         dialog.show();
     }
 
-
-
+    // *** P E N D I E N T E ***
+    // -- METODO PARA ELIMINAR UN REGISTRO DE LA BASE DE DATOS --
     private void Eliminar() {
         SQLiteDatabase db = conexion.getWritableDatabase();
         String [] params = {id.getText().toString()};
@@ -297,7 +296,7 @@ public class ActivityListView extends AppCompatActivity {
         ClearScreen();
     }
 
-
+    // -- METODO PARA LIMPIAR PANTALLA --
     private void ClearScreen() {
         nombre.setText("");
         telefono.setText("");
